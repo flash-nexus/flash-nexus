@@ -1,0 +1,32 @@
+{
+  "name": "@flash-nexus/config",
+  "type": "module",
+  "version": "0.1.0",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "obuild",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@flash-nexus/types": "workspace:*",
+    "c12": "^3.3.4"
+  },
+  "devDependencies": {
+    "obuild": "^0.4.45"
+  }
+}

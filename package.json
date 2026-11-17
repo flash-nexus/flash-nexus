@@ -1,0 +1,24 @@
+{
+  "name": "flash-nexus-monorepo",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "eslint --cache ."
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^10.0.0",
+    "@types/node": "^26.6.6",
+    "defu": "^6.1.7",
+    "eslint": "^10.15.0",
+    "obuild": "^0.4.45",
+    "typescript": "6.0.3",
+    "unenv": "^1.10.0"
+  }
+}
