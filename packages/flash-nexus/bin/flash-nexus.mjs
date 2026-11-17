@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import process from 'node:process'
-import { runCli } from '@flash-nexus/cli'
+import { runCliFromProcess } from '@flash-nexus/cli'
 
-runCli().catch((error) => {
+runCliFromProcess().catch((error) => {
   process.stderr.write(`${error instanceof Error
     ? error.message
     : String(error)}\n`)
