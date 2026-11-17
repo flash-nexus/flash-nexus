@@ -19,7 +19,7 @@
     "build": "pnpm -r run build",
     "typecheck": "pnpm -r run typecheck",
     "lint": "eslint --cache .",
-    "release": "bumpp"
+    "release": "bumpp -r"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^10.0.0",

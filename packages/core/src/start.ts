@@ -1,7 +1,8 @@
 import type { DnsConfig } from '@flash-dns/config'
 import type { FlashNexusConfig } from '@flash-nexus/types'
 import type { FlashTunnelConfig } from '@flash-tunnel/config'
-import type { PreviewSession } from '@flash-tunnel/core'
+import type { PreparedSessionResource, PreviewSession } from '@flash-tunnel/core'
+import type { AdapterContext, TunnelHandle } from '@flash-tunnel/types'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process, { loadEnvFile } from 'node:process'
@@ -10,7 +11,6 @@ import { createDnsManager, resolveDnsConfig } from '@flash-dns/core'
 import { loadFlashNexusConfig } from '@flash-nexus/config'
 import { createCloudflareTunnel } from '@flash-tunnel/adapter-cloudflare'
 import { startPreviewSession } from '@flash-tunnel/core'
-import { createFlashDnsAdapter } from './dns-adapter'
 
 export interface FlashNexusStartOptions {
   cwd?: string
@@ -59,17 +59,14 @@ function tunnelConfigFor(config: FlashNexusConfig, localUrl?: string): FlashTunn
         ? { url: localUrl, command: undefined, dir: undefined }
         : {}),
     },
-    domain: {
-      zone: config.dns?.zone ?? config.tunnel?.zone,
-    },
     tunnel: {
       mode: config.tunnel?.mode,
       name: config.tunnel?.name,
+      hostname: config.tunnel?.hostname ?? config.dns?.hostname,
     },
     providers: {
       cloudflare: {
         accountId: config.providers?.cloudflare?.accountId,
-        zoneId: config.providers?.cloudflare?.zoneId,
         cloudflaredPath: config.tunnel?.cloudflaredPath ?? config.providers?.cloudflare?.cloudflaredPath,
         originRequest: config.tunnel?.originRequest,
       },
@@ -90,7 +87,7 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
 
   let hostname: string | undefined
   let zone: string | undefined
-  let dns: ReturnType<typeof createFlashDnsAdapter> | undefined
+  let dnsManager: ReturnType<typeof createDnsManager<{ proxied?: boolean }>> | undefined
   if (mode === 'named') {
     const resolvedDns = resolveDnsConfig({
       cwd,
@@ -107,9 +104,7 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
       apiToken: apiToken ?? '',
       zoneId: resolvedDns.zoneId ?? cloudflare?.zoneId,
     })
-    dns = createFlashDnsAdapter({
-      manager: createDnsManager({ adapter: dnsAdapter }),
-    })
+    dnsManager = createDnsManager({ adapter: dnsAdapter })
   }
 
   const tunnel = createCloudflareTunnel({
@@ -123,16 +118,58 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
   return startPreviewSession({
     cwd,
     config: tunnelConfig,
-    adapters: { tunnel, dns },
+    adapters: { tunnel },
     mode,
     hostname,
-    zone,
+    prepare: mode === 'named'
+      ? createDnsPreparation({
+          manager: dnsManager!,
+          hostname: hostname!,
+          zone: zone!,
+        })
+      : undefined,
     signal: options.signal,
     onLog: options.onLog,
     persist: config.tunnel?.persist,
     keep: config.tunnel?.keep,
-    overwrite: config.tunnel?.overwrite,
     autoStopAfterMs: config.tunnel?.autoStopAfterMs,
     verifyTimeoutMs: config.tunnel?.verifyTimeoutMs,
   })
+}
+
+function createDnsPreparation(options: {
+  manager: ReturnType<typeof createDnsManager<{ proxied?: boolean }>>
+  hostname: string
+  zone: string
+}): (ctx: AdapterContext, handle: TunnelHandle) => Promise<PreparedSessionResource> {
+  return async (ctx, handle) => {
+    if (!handle.target) {
+      throw new Error('Named tunnel did not provide a DNS target')
+    }
+    const result = await options.manager.ensure({
+      zone: options.zone,
+      name: options.hostname,
+      type: handle.target.type,
+      content: handle.target.target,
+      owner: { application: 'flash-nexus', id: ctx.sessionId },
+      ttl: 'auto',
+      providerOptions: handle.target.proxied === undefined
+        ? {}
+        : { proxied: handle.target.proxied },
+    }, {
+      signal: ctx.signal,
+      requestId: ctx.sessionId,
+    })
+
+    return {
+      provider: result.ref.provider,
+      ref: result.ref,
+      dispose: async () => {
+        await options.manager.remove(result.ref, {
+          signal: ctx.signal,
+          requestId: ctx.sessionId,
+        })
+      },
+    }
+  }
 }
