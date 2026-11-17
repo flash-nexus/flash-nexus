@@ -3,6 +3,14 @@
   "type": "module",
   "version": "0.1.0",
   "license": "MIT",
+  "homepage": "https://github.com/flash-nexus/flash-nexus#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flash-nexus/flash-nexus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flash-nexus/flash-nexus/issues"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -18,6 +26,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "scripts": {
     "build": "obuild",
     "typecheck": "tsc --noEmit"
