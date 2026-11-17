@@ -137,7 +137,7 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
   })
 }
 
-function createDnsPreparation(options: {
+export function createDnsPreparation(options: {
   manager: ReturnType<typeof createDnsManager<{ proxied?: boolean }>>
   hostname: string
   zone: string
