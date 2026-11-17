@@ -8,6 +8,7 @@
     "paths": {
       "@flash-nexus/config": ["./packages/config/src/index.ts"],
       "@flash-nexus/core": ["./packages/core/src/index.ts"],
+      "@flash-nexus/sdk": ["./packages/sdk/src/index.ts"],
       "@flash-nexus/types": ["./packages/types/src/index.ts"]
     },
     "types": ["node"],
