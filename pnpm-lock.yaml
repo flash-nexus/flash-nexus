@@ -253,17 +253,17 @@ importers:
         specifier: workspace:*
         version: link:../types
       '@flash-tunnel/adapter-cloudflare':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.0
+        version: 0.4.0
       '@flash-tunnel/config':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.0
+        version: 0.4.0
       '@flash-tunnel/core':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.0
+        version: 0.4.0
       '@flash-tunnel/types':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.0
+        version: 0.4.0
     devDependencies:
       obuild:
         specifier: ^0.4.45
@@ -522,24 +522,24 @@ packages:
     resolution: {integrity: sha512-IT6o+aR5F76rW/ZeuLwK8iu8M2BBmi8eMSGvJY/PNq0X/QI9VplYxaRxb3+/nAFvtgQrHezSAB64xXgXht1oeA==}
     engines: {node: '>=22.14.0'}
 
-  '@flash-tunnel/adapter-cloudflare@0.3.0':
-    resolution: {integrity: sha512-N3pgqp/2NugkRvLg6dpG0kVOLFboX0iXUM6SuZGzM0q5R7pk1Lo3wjWW7e7UDPZJQCJtmOrivYBhgZweGvouKQ==}
+  '@flash-tunnel/adapter-cloudflare@0.4.0':
+    resolution: {integrity: sha512-ZZl7j/h0FmED/Bo/iu0HID3JhY6EU6RYIhAllEarwbjdzaCeZOI7A1kjCI0gNZmB57/wo2pRNbzJKuQGK6ZjVQ==}
     engines: {node: '>=22.14.0'}
 
-  '@flash-tunnel/config@0.3.0':
-    resolution: {integrity: sha512-Ui0nJvwLuUkjepnqbFoCmUMuhI5zcepkFIE6bg4gRkTX8iRYOJUMSY0BZXkP70yGc+LyeLa+E5w9aqHAUkrMtg==}
+  '@flash-tunnel/config@0.4.0':
+    resolution: {integrity: sha512-xIajjlsjIjq803W6acMa8z35uuNL2A4/ihV4woMsm6gDitm9ugL3raBI/mBJDHieIUgwHH4XwAQVjmtAy8E3DA==}
     engines: {node: '>=22.14.0'}
 
-  '@flash-tunnel/core@0.3.0':
-    resolution: {integrity: sha512-thxD7sNE+di0Tux/Vc2mxpIUXe47QaxNLag1iU9oKui7JhETnpEJ8DkjeJ1ZM3U073G1Yw6RIrC6bjEV2jwAXw==}
+  '@flash-tunnel/core@0.4.0':
+    resolution: {integrity: sha512-Wzii3aVh5vM3zqCyZGfku+XHIFlf6TMu4JwUh5q7eoJ5Lfyklmj13HQ5XRKAad/cIdwvmvDnlJ8ocp0V2zU1Uw==}
     engines: {node: '>=22.14.0'}
 
-  '@flash-tunnel/types@0.3.0':
-    resolution: {integrity: sha512-lvHLYNxo3BY+49KKtpZavkgudii1ZDiUKXVQ7wRrlNwohLGr/tY8f1JX+23yqk42YbTRrnMKybfxP65mTbXpeg==}
+  '@flash-tunnel/types@0.4.0':
+    resolution: {integrity: sha512-aklsQ71D6PWlU5hPao6XlawxE4zYK00Ss4/Zx6oLbCpSWkbFCOqOLuO+K5RrUMJn2DaBypJRMZLewa4l/rJrUA==}
     engines: {node: '>=22.14.0'}
 
-  '@flash-tunnel/utils@0.3.0':
-    resolution: {integrity: sha512-/PVXBlFRMiBu2XfxXIPEiqL00reYE1ondvw3mftxzUdRaoA+avrtytryHfAj1QmcN9Yd1zz3+LpL6puMQj16NQ==}
+  '@flash-tunnel/utils@0.4.0':
+    resolution: {integrity: sha512-qAxQjgznWTaBw8Zp5oSLbo8aXjsnM371o0BZ5BfA/NaJvcOvkA17/rig2BkzKqmtfILJ//mXOSHC3wuYjo7RoA==}
     engines: {node: '>=22.14.0'}
 
   '@humanfs/core@0.19.2':
@@ -2313,24 +2313,24 @@ snapshots:
 
   '@flash-dns/types@0.1.3': {}
 
-  '@flash-tunnel/adapter-cloudflare@0.3.0':
+  '@flash-tunnel/adapter-cloudflare@0.4.0':
     dependencies:
-      '@flash-tunnel/types': 0.3.0
-      '@flash-tunnel/utils': 0.3.0
+      '@flash-tunnel/types': 0.4.0
+      '@flash-tunnel/utils': 0.4.0
 
-  '@flash-tunnel/config@0.3.0': {}
+  '@flash-tunnel/config@0.4.0': {}
 
-  '@flash-tunnel/core@0.3.0':
+  '@flash-tunnel/core@0.4.0':
     dependencies:
-      '@flash-tunnel/config': 0.3.0
-      '@flash-tunnel/types': 0.3.0
-      '@flash-tunnel/utils': 0.3.0
+      '@flash-tunnel/config': 0.4.0
+      '@flash-tunnel/types': 0.4.0
+      '@flash-tunnel/utils': 0.4.0
       pathe: 2.0.3
       unconfig: 7.5.0
 
-  '@flash-tunnel/types@0.3.0': {}
+  '@flash-tunnel/types@0.4.0': {}
 
-  '@flash-tunnel/utils@0.3.0': {}
+  '@flash-tunnel/utils@0.4.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
