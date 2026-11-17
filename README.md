@@ -29,7 +29,14 @@ export default defineConfig({
 })
 ```
 
-Set `CLOUDFLARE_API_TOKEN` in the environment or in `.env`, then run:
+Set the Cloudflare adapter credentials in the environment or in `.env`, then run:
+
+```env
+CLOUDFLARE_API_TOKEN=...
+CLOUDFLARE_ACCOUNT_ID=...
+# Optional when the DNS adapter should skip zone-name lookup.
+CLOUDFLARE_ZONE_ID=...
+```
 
 ```bash
 npx flash-nexus

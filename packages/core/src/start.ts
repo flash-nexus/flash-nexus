@@ -66,8 +66,7 @@ function tunnelConfigFor(config: FlashNexusConfig, localUrl?: string): FlashTunn
     },
     providers: {
       cloudflare: {
-        accountId: config.providers?.cloudflare?.accountId,
-        cloudflaredPath: config.tunnel?.cloudflaredPath ?? config.providers?.cloudflare?.cloudflaredPath,
+        cloudflaredPath: config.tunnel?.cloudflaredPath,
         originRequest: config.tunnel?.originRequest,
       },
     },
@@ -82,8 +81,6 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
     : await loadFlashNexusConfig({ cwd, envFile: options.envFile })
   const config = loaded.config
   const mode = options.mode ?? config.tunnel?.mode ?? 'named'
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-  const cloudflare = config.providers?.cloudflare
 
   let hostname: string | undefined
   let zone: string | undefined
@@ -100,17 +97,12 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
     })
     hostname = resolvedDns.hostname
     zone = resolvedDns.zone
-    const dnsAdapter = createCloudflareAdapter({
-      apiToken: apiToken ?? '',
-      zoneId: resolvedDns.zoneId ?? cloudflare?.zoneId,
-    })
+    const dnsAdapter = createCloudflareAdapter()
     dnsManager = createDnsManager({ adapter: dnsAdapter })
   }
 
   const tunnel = createCloudflareTunnel({
-    accountId: cloudflare?.accountId,
-    apiToken,
-    cloudflaredPath: config.tunnel?.cloudflaredPath ?? cloudflare?.cloudflaredPath,
+    cloudflaredPath: config.tunnel?.cloudflaredPath,
     originRequest: config.tunnel?.originRequest,
   })
 

@@ -1,10 +1,14 @@
 minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
-  - '@flash-tunnel/adapter-cloudflare@0.4.0'
-  - '@flash-tunnel/config@0.4.0'
-  - '@flash-tunnel/core@0.4.0'
-  - '@flash-tunnel/types@0.4.0'
-  - '@flash-tunnel/utils@0.4.0'
+  - '@flash-tunnel/adapter-cloudflare'
+  - '@flash-tunnel/config'
+  - '@flash-tunnel/core'
+  - '@flash-tunnel/types'
+  - '@flash-tunnel/utils'
+  - '@flash-dns/adapter-cloudflare'
+  - '@flash-dns/config'
+  - '@flash-dns/core'
+  - '@flash-dns/types'
 
 trustPolicy: no-downgrade
 shellEmulator: true

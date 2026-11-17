@@ -37,16 +37,9 @@ export interface FlashNexusDnsConfig {
   record?: { ttl?: number | 'auto' }
   providers?: {
     cloudflare?: {
-      zoneId?: string
       proxied?: boolean
     }
   }
-}
-
-export interface FlashNexusCloudflareConfig {
-  accountId?: string
-  zoneId?: string
-  cloudflaredPath?: string
 }
 
 export interface FlashNexusConfig {
@@ -57,7 +50,4 @@ export interface FlashNexusConfig {
   server?: FlashNexusServerConfig
   tunnel?: FlashNexusTunnelConfig
   dns?: FlashNexusDnsConfig
-  providers?: {
-    cloudflare?: FlashNexusCloudflareConfig
-  }
 }
