@@ -1,2 +1,3 @@
-export { defineConfig, loadFlashNexusConfig } from '@flash-nexus/core'
+export { defineConfig, loadFlashNexusConfig, startFlashNexus } from '@flash-nexus/core'
 export type { FlashNexusConfig } from '@flash-nexus/core'
+export type { FlashNexusStartOptions } from '@flash-nexus/core'

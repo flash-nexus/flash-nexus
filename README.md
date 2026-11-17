@@ -2,8 +2,42 @@
 
 Configuration and orchestration for local network previews.
 
-The project composes lower-level tunnel and DNS capabilities while keeping
-project configuration in `flash-nexus.config.ts` and `.env` files.
+The CLI starts or attaches to a local server, provisions a Cloudflare DNS
+record through `flash-dns`, and starts a Cloudflare Tunnel through
+`flash-tunnel`. DNS ownership stays with the Nexus session and is removed
+before the tunnel is deprovisioned.
+
+## Quick start
+
+Create `flash-nexus.config.ts` in the project directory:
+
+```ts
+import { defineConfig } from 'flash-nexus'
+
+export default defineConfig({
+  server: {
+    command: 'pnpm dev',
+    port: 5173
+  },
+  tunnel: {
+    mode: 'named'
+  },
+  dns: {
+    zone: 'example.com',
+    naming: { template: 'fd-{project}.example.com' }
+  }
+})
+```
+
+Set `CLOUDFLARE_API_TOKEN` in the environment or in `.env`, then run:
+
+```bash
+npx flash-nexus
+```
+
+Use `--url` to attach to an already-running origin, `--mode quick` for a
+temporary `trycloudflare.com` address, or `--dry-run` to inspect the resolved
+configuration without creating resources.
 
 ## Workspace
 
@@ -13,5 +47,5 @@ project configuration in `flash-nexus.config.ts` and `.env` files.
 - `@flash-nexus/sdk` exposes programmatic integration.
 - `flash-nexus` provides the CLI entry point.
 
-The build uses obuild. Runtime portability is reserved for the parts that need
-unenv; c12 remains responsible for configuration and dotenv loading.
+The build uses obuild. c12 loads `flash-nexus.config.*` and dotenv files, while
+the lower-level packages keep tunnel and DNS provider behavior independent.

@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@flash-nexus/config": "workspace:*",
+    "@flash-nexus/core": "workspace:*",
     "cac": "^7.1.0"
   },
   "devDependencies": {

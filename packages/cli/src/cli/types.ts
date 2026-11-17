@@ -1,6 +1,10 @@
 export interface FlashNexusCliInput {
   cwd?: string
   envFile?: string
+  localUrl?: string
+  mode?: 'named' | 'quick'
+  hostname?: string
+  zone?: string
   dryRun?: boolean
 }
 

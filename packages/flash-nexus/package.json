@@ -14,16 +14,34 @@
   "publishConfig": {
     "access": "public"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "bin": {
     "flash-nexus": "bin/flash-nexus.mjs"
   },
   "files": [
-    "bin"
+    "bin",
+    "dist"
   ],
   "engines": {
     "node": ">=22.14.0"
   },
+  "scripts": {
+    "build": "obuild",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
-    "@flash-nexus/cli": "workspace:*"
+    "@flash-nexus/cli": "workspace:*",
+    "@flash-nexus/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "obuild": "^0.4.45"
   }
 }

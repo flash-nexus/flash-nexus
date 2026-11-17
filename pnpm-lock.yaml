@@ -205,6 +205,9 @@ importers:
       '@flash-nexus/config':
         specifier: workspace:*
         version: link:../config
+      '@flash-nexus/core':
+        specifier: workspace:*
+        version: link:../core
       cac:
         specifier: ^7.1.0
         version: 7.1.0
@@ -228,12 +231,36 @@ importers:
 
   packages/core:
     dependencies:
+      '@flash-dns/adapter-cloudflare':
+        specifier: ^0.1.3
+        version: 0.1.3
+      '@flash-dns/config':
+        specifier: ^0.1.3
+        version: 0.1.3
+      '@flash-dns/core':
+        specifier: ^0.1.3
+        version: 0.1.3
+      '@flash-dns/types':
+        specifier: ^0.1.3
+        version: 0.1.3
       '@flash-nexus/config':
         specifier: workspace:*
         version: link:../config
       '@flash-nexus/types':
         specifier: workspace:*
         version: link:../types
+      '@flash-tunnel/adapter-cloudflare':
+        specifier: ^0.3.0
+        version: 0.3.0
+      '@flash-tunnel/config':
+        specifier: ^0.3.0
+        version: 0.3.0
+      '@flash-tunnel/core':
+        specifier: ^0.3.0
+        version: 0.3.0
+      '@flash-tunnel/types':
+        specifier: ^0.3.0
+        version: 0.3.0
     devDependencies:
       obuild:
         specifier: ^0.4.45
@@ -244,6 +271,13 @@ importers:
       '@flash-nexus/cli':
         specifier: workspace:*
         version: link:../cli
+      '@flash-nexus/sdk':
+        specifier: workspace:*
+        version: link:../sdk
+    devDependencies:
+      obuild:
+        specifier: ^0.4.45
+        version: 0.4.45(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(typescript@6.0.3)
 
   packages/sdk:
     dependencies:
@@ -468,6 +502,42 @@ packages:
   '@eslint/plugin-kit@0.7.3':
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@flash-dns/adapter-cloudflare@0.1.3':
+    resolution: {integrity: sha512-SxmTWkbns6O+PrU4OVl0l+SLE8aMDPpFeHYoTVlCEMOZNMeJXbaZ1Z9Mau+mYHPUrqxaxkSa8qYr/3j0YDpVAQ==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-dns/config@0.1.3':
+    resolution: {integrity: sha512-EOOA/MMI7KNRpupbNxw43Ewc8WBJyXNAc2vI6YBUdyEsSrvwV8szKkPzSPiAAbktx2OL0KupLqinbs1SUe6Twg==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-dns/core@0.1.3':
+    resolution: {integrity: sha512-ADXzLjfOfNZ3iyrNw/KNoOO5vxufNxptp2JI0BOfIxztceE8cb+80j58Zi5yMAZhBj8HJsreVmSuy71e6pK60g==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-dns/types@0.1.3':
+    resolution: {integrity: sha512-IT6o+aR5F76rW/ZeuLwK8iu8M2BBmi8eMSGvJY/PNq0X/QI9VplYxaRxb3+/nAFvtgQrHezSAB64xXgXht1oeA==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-tunnel/adapter-cloudflare@0.3.0':
+    resolution: {integrity: sha512-N3pgqp/2NugkRvLg6dpG0kVOLFboX0iXUM6SuZGzM0q5R7pk1Lo3wjWW7e7UDPZJQCJtmOrivYBhgZweGvouKQ==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-tunnel/config@0.3.0':
+    resolution: {integrity: sha512-Ui0nJvwLuUkjepnqbFoCmUMuhI5zcepkFIE6bg4gRkTX8iRYOJUMSY0BZXkP70yGc+LyeLa+E5w9aqHAUkrMtg==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-tunnel/core@0.3.0':
+    resolution: {integrity: sha512-thxD7sNE+di0Tux/Vc2mxpIUXe47QaxNLag1iU9oKui7JhETnpEJ8DkjeJ1ZM3U073G1Yw6RIrC6bjEV2jwAXw==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-tunnel/types@0.3.0':
+    resolution: {integrity: sha512-lvHLYNxo3BY+49KKtpZavkgudii1ZDiUKXVQ7wRrlNwohLGr/tY8f1JX+23yqk42YbTRrnMKybfxP65mTbXpeg==}
+    engines: {node: '>=22.14.0'}
+
+  '@flash-tunnel/utils@0.3.0':
+    resolution: {integrity: sha512-/PVXBlFRMiBu2XfxXIPEiqL00reYE1ondvw3mftxzUdRaoA+avrtytryHfAj1QmcN9Yd1zz3+LpL6puMQj16NQ==}
+    engines: {node: '>=22.14.0'}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2222,6 +2292,42 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
+
+  '@flash-dns/adapter-cloudflare@0.1.3':
+    dependencies:
+      '@flash-dns/types': 0.1.3
+
+  '@flash-dns/config@0.1.3':
+    dependencies:
+      '@flash-dns/types': 0.1.3
+
+  '@flash-dns/core@0.1.3':
+    dependencies:
+      '@flash-dns/config': 0.1.3
+      '@flash-dns/types': 0.1.3
+      jiti: 2.7.0
+      unconfig: 7.5.0
+
+  '@flash-dns/types@0.1.3': {}
+
+  '@flash-tunnel/adapter-cloudflare@0.3.0':
+    dependencies:
+      '@flash-tunnel/types': 0.3.0
+      '@flash-tunnel/utils': 0.3.0
+
+  '@flash-tunnel/config@0.3.0': {}
+
+  '@flash-tunnel/core@0.3.0':
+    dependencies:
+      '@flash-tunnel/config': 0.3.0
+      '@flash-tunnel/types': 0.3.0
+      '@flash-tunnel/utils': 0.3.0
+      pathe: 2.0.3
+      unconfig: 7.5.0
+
+  '@flash-tunnel/types@0.3.0': {}
+
+  '@flash-tunnel/utils@0.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
