@@ -11,6 +11,7 @@ export function createCli() {
     .option('--url <url>', 'Reuse an already running local server')
     .option('--mode <mode>', 'Tunnel mode: named or quick')
     .option('--hostname <fqdn>', 'Public hostname for named mode')
+    .option('--subdomain <pattern>', 'Named tunnel subdomain template such as fd-{rand:4}')
     .option('--zone <domain>', 'Cloudflare zone for named mode')
     .option('--dry-run', 'Print the resolved configuration')
     .option('-v, --version', 'Display version number')
@@ -36,6 +37,7 @@ export function parseCliInput(argv: string[]): FlashNexusCliParseResult {
       localUrl: options.url,
       mode: options.mode,
       hostname: options.hostname,
+      subdomain: options.subdomain,
       zone: options.zone,
       dryRun: options.dryRun,
     },

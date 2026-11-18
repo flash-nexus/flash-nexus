@@ -3,12 +3,13 @@ import type { FlashNexusConfig } from '@flash-nexus/types'
 import type { FlashTunnelConfig } from '@flash-tunnel/config'
 import type { PreparedSessionResource, PreviewSession } from '@flash-tunnel/core'
 import type { AdapterContext, TunnelHandle } from '@flash-tunnel/types'
+import { randomInt } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import process, { loadEnvFile } from 'node:process'
 import { createCloudflareAdapter } from '@flash-dns/adapter-cloudflare'
 import { createDnsManager, resolveDnsConfig } from '@flash-dns/core'
-import { loadFlashNexusConfig } from '@flash-nexus/config'
+import { loadFlashNexusConfig, resolveFlashNexusEnvironment } from '@flash-nexus/config'
 import { createCloudflareTunnel } from '@flash-tunnel/adapter-cloudflare'
 import { startPreviewSession } from '@flash-tunnel/core'
 
@@ -21,7 +22,9 @@ export interface FlashNexusStartOptions {
     ? T extends { mode?: infer M } ? M : never
     : never
   hostname?: string
+  subdomain?: string
   zone?: string
+  cloudflaredPath?: string
   signal?: AbortSignal
   onLog?: (line: string, stream: 'stdout' | 'stderr') => void
 }
@@ -33,6 +36,23 @@ function loadEnvironment(envFile: string | undefined, cwd: string): void {
   if (envFile || existsSync(file)) {
     loadEnvFile(file)
   }
+}
+
+const SUBDOMAIN_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789'
+
+function resolveSubdomain(template = 'fd-{rand:4}'): string {
+  const resolved = template.replace(/\{rand(?::(\d+))?\}/g, (_match, length: string | undefined) => {
+    const size = Number(length ?? 4)
+    return Array.from({ length: size }, () => SUBDOMAIN_ALPHABET[randomInt(SUBDOMAIN_ALPHABET.length)]).join('')
+  })
+  if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i.test(resolved)) {
+    throw new TypeError(`Invalid subdomain template "${template}"`)
+  }
+  return resolved
+}
+
+function createHostname(zone: string, subdomain?: string): string {
+  return `${resolveSubdomain(subdomain)}.${zone}`
 }
 
 function dnsConfigFor(config: FlashNexusConfig): DnsConfig {
@@ -51,7 +71,7 @@ function dnsConfigFor(config: FlashNexusConfig): DnsConfig {
   }
 }
 
-function tunnelConfigFor(config: FlashNexusConfig, localUrl?: string): FlashTunnelConfig {
+function tunnelConfigFor(config: FlashNexusConfig, localUrl: string | undefined, mode: 'named' | 'quick', hostname: string | undefined, cloudflaredPath: string | undefined): FlashTunnelConfig {
   return {
     server: {
       ...config.server,
@@ -60,13 +80,13 @@ function tunnelConfigFor(config: FlashNexusConfig, localUrl?: string): FlashTunn
         : {}),
     },
     tunnel: {
-      mode: config.tunnel?.mode,
+      mode,
       name: config.tunnel?.name,
-      hostname: config.tunnel?.hostname ?? config.dns?.hostname,
+      hostname,
     },
     providers: {
       cloudflare: {
-        cloudflaredPath: config.tunnel?.cloudflaredPath,
+        cloudflaredPath,
         originRequest: config.tunnel?.originRequest,
       },
     },
@@ -80,7 +100,18 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
     ? { config: options.config }
     : await loadFlashNexusConfig({ cwd, envFile: options.envFile })
   const config = loaded.config
-  const mode = options.mode ?? config.tunnel?.mode ?? 'named'
+  const environment = resolveFlashNexusEnvironment(process.env)
+  const mode = options.mode ?? environment.mode ?? config.tunnel?.mode ?? 'named'
+  const zoneOverride = options.zone ?? environment.zone
+  const hostnameOverride = options.hostname ?? environment.hostname
+  const subdomain = options.subdomain ?? environment.subdomain ?? config.tunnel?.subdomain
+  const zoneCandidate = zoneOverride ?? config.dns?.zone ?? config.tunnel?.zone
+  const generatedHostname = !hostnameOverride && subdomain && zoneCandidate
+    ? createHostname(zoneCandidate, subdomain)
+    : undefined
+  const cloudflaredPath = options.cloudflaredPath
+    ?? environment.cloudflaredPath
+    ?? config.tunnel?.cloudflaredPath
 
   let hostname: string | undefined
   let zone: string | undefined
@@ -91,8 +122,8 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
       config: dnsConfigFor(config),
       env: process.env,
       cli: {
-        hostname: options.hostname,
-        zone: options.zone,
+        hostname: hostnameOverride ?? generatedHostname,
+        zone: zoneOverride,
       },
     })
     hostname = resolvedDns.hostname
@@ -102,11 +133,11 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
   }
 
   const tunnel = createCloudflareTunnel({
-    cloudflaredPath: config.tunnel?.cloudflaredPath,
+    cloudflaredPath,
     originRequest: config.tunnel?.originRequest,
   })
 
-  const tunnelConfig = tunnelConfigFor(config, options.localUrl)
+  const tunnelConfig = tunnelConfigFor(config, options.localUrl, mode, hostname, cloudflaredPath)
   return startPreviewSession({
     cwd,
     config: tunnelConfig,

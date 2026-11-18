@@ -16,6 +16,7 @@ export interface FlashNexusTunnelConfig {
   name?: string
   zone?: string
   hostname?: string
+  subdomain?: string
   cloudflaredPath?: string
   originRequest?: {
     httpHostHeader?: string

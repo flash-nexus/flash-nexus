@@ -7,6 +7,8 @@ import { createJiti } from 'jiti'
 
 const require = createRequire(import.meta.url)
 
+export { resolveFlashNexusEnvironment } from './environment'
+export type { FlashNexusEnvironmentScope, FlashNexusEnvironmentValues } from './environment'
 export type { FlashNexusConfig } from '@flash-nexus/types'
 
 export function defineConfig<T extends FlashNexusConfig>(config: T): T {

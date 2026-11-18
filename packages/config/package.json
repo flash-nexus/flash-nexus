@@ -19,6 +19,11 @@
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
       "default": "./dist/index.mjs"
+    },
+    "./environment": {
+      "types": "./dist/environment.d.mts",
+      "import": "./dist/environment.mjs",
+      "default": "./dist/environment.mjs"
     }
   },
   "main": "./dist/index.mjs",

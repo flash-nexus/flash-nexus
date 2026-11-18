@@ -33,6 +33,7 @@ async function runCli(options: FlashNexusCliInput): Promise<void> {
     localUrl: options.localUrl,
     mode: options.mode,
     hostname: options.hostname,
+    subdomain: options.subdomain,
     zone: options.zone,
     onLog: (line, stream) => {
       process[stream === 'stderr'

@@ -4,6 +4,7 @@ export interface FlashNexusCliInput {
   localUrl?: string
   mode?: 'named' | 'quick'
   hostname?: string
+  subdomain?: string
   zone?: string
   dryRun?: boolean
 }
