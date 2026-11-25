@@ -63,7 +63,7 @@ describe('credentials for Cloudflare named sessions', () => {
     await start()
 
     expect(createDnsAdapter.mock.lastCall?.[0].env).toMatchObject(expected)
-    expect(createTunnelAdapter.mock.lastCall?.[0].env).toMatchObject(expected)
+    expect(createTunnelAdapter.mock.lastCall?.[0].env).toBe(createDnsAdapter.mock.lastCall?.[0].env)
     expect(process.env).toMatchObject(inherited)
   })
 
@@ -87,5 +87,44 @@ describe('credentials for Cloudflare named sessions', () => {
 
     expect(createDnsAdapter.mock.lastCall?.[0].env).toMatchObject(inherited)
     expect(createTunnelAdapter.mock.lastCall?.[0].env).toMatchObject(inherited)
+  })
+
+  it('keeps file credentials scoped to the session adapters', async () => {
+    vi.stubEnv('CLOUDFLARE_API_TOKEN', undefined)
+    await writeFile(join(cwd, '.env'), 'CLOUDFLARE_API_TOKEN=session-token')
+
+    await start()
+
+    expect(createDnsAdapter.mock.lastCall?.[0].env?.CLOUDFLARE_API_TOKEN).toBe('session-token')
+    expect(createTunnelAdapter.mock.lastCall?.[0].env?.CLOUDFLARE_API_TOKEN).toBe('session-token')
+    expect(process.env.CLOUDFLARE_API_TOKEN).toBeUndefined()
+  })
+
+  it.skipIf(process.platform !== 'win32')('uses case-insensitive credential keys on Windows', async () => {
+    await writeFile(join(cwd, '.env'), 'cloudflare_api_token=project-token')
+
+    await start()
+
+    expect(createDnsAdapter.mock.lastCall?.[0].env).toMatchObject({
+      ...inherited,
+      CLOUDFLARE_API_TOKEN: 'project-token',
+    })
+  })
+
+  it('keeps inherited values for ordinary variables and fills in missing ones', async () => {
+    vi.stubEnv('FLASH_NEXUS_MODE', 'named')
+    vi.stubEnv('FLASH_NEXUS_SUBDOMAIN', undefined)
+    await writeFile(join(cwd, '.env'), 'FLASH_NEXUS_MODE=quick\nFLASH_NEXUS_SUBDOMAIN=preview')
+
+    await start()
+
+    expect(process.env.FLASH_NEXUS_MODE).toBe('named')
+    expect(process.env.FLASH_NEXUS_SUBDOMAIN).toBe('preview')
+  })
+
+  it('reports a missing file if an explicit path was selected', async () => {
+    await expect(start('missing.env')).rejects.toMatchObject({ code: 'ENOENT' })
+    expect(createDnsAdapter).not.toHaveBeenCalled()
+    expect(createTunnelAdapter).not.toHaveBeenCalled()
   })
 })

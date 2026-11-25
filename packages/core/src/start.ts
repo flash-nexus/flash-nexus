@@ -4,15 +4,14 @@ import type { FlashTunnelConfig } from '@flash-tunnel/config'
 import type { PreparedSessionResource, PreviewSession } from '@flash-tunnel/core'
 import type { AdapterContext, TunnelHandle } from '@flash-tunnel/types'
 import { randomInt } from 'node:crypto'
-import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
-import process, { loadEnvFile } from 'node:process'
+import process from 'node:process'
 import { createCloudflareAdapter } from '@flash-dns/adapter-cloudflare'
 import { createDnsManager, resolveDnsConfig } from '@flash-dns/core'
 import { loadFlashNexusConfig, resolveFlashNexusEnvironment } from '@flash-nexus/config'
 import { createCloudflareTunnel } from '@flash-tunnel/adapter-cloudflare'
 import { startPreviewSession } from '@flash-tunnel/core'
-import { resolveCloudflareEnvironment } from './cloudflare-environment'
+import { loadSessionEnvironment, resolveCloudflareEnvironment } from './session-environment'
 
 export interface FlashNexusStartOptions {
   cwd?: string
@@ -28,16 +27,6 @@ export interface FlashNexusStartOptions {
   cloudflaredPath?: string
   signal?: AbortSignal
   onLog?: (line: string, stream: 'stdout' | 'stderr') => void
-}
-
-function loadEnvironment(envFile: string | undefined, cwd: string): string | undefined {
-  const file = envFile
-    ? resolve(cwd, envFile)
-    : resolve(cwd, '.env')
-  if (envFile || existsSync(file)) {
-    loadEnvFile(file)
-    return file
-  }
 }
 
 const SUBDOMAIN_ALPHABET = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -97,7 +86,7 @@ function tunnelConfigFor(config: FlashNexusConfig, localUrl: string | undefined,
 
 export async function startFlashNexus(options: FlashNexusStartOptions = {}): Promise<PreviewSession> {
   const cwd = resolve(options.cwd ?? process.cwd())
-  const envFile = loadEnvironment(options.envFile, cwd)
+  const projectCredentials = loadSessionEnvironment(cwd, options.envFile)
   const loaded = options.config
     ? { config: options.config }
     : await loadFlashNexusConfig({ cwd, envFile: options.envFile })
@@ -119,7 +108,7 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
   let zone: string | undefined
   let dnsManager: ReturnType<typeof createDnsManager<{ proxied?: boolean }>> | undefined
   const cloudflareEnv = mode === 'named'
-    ? resolveCloudflareEnvironment(envFile)
+    ? resolveCloudflareEnvironment(projectCredentials)
     : undefined
   if (mode === 'named') {
     const resolvedDns = resolveDnsConfig({
