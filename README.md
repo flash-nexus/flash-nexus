@@ -38,6 +38,11 @@ CLOUDFLARE_ACCOUNT_ID=...
 CLOUDFLARE_ZONE_ID=...
 ```
 
+Nexus takes `CLOUDFLARE_*` values from the selected env file (`.env` in the
+current directory by default, or `--env-file`). The process environment fills
+in keys omitted from the file. An explicitly empty `CLOUDFLARE_ZONE_ID=` clears
+an inherited ID so the DNS adapter looks up the zone by name.
+
 ```bash
 npx flash-nexus
 ```

@@ -12,6 +12,7 @@ import { createDnsManager, resolveDnsConfig } from '@flash-dns/core'
 import { loadFlashNexusConfig, resolveFlashNexusEnvironment } from '@flash-nexus/config'
 import { createCloudflareTunnel } from '@flash-tunnel/adapter-cloudflare'
 import { startPreviewSession } from '@flash-tunnel/core'
+import { resolveCloudflareEnvironment } from './cloudflare-environment'
 
 export interface FlashNexusStartOptions {
   cwd?: string
@@ -29,12 +30,13 @@ export interface FlashNexusStartOptions {
   onLog?: (line: string, stream: 'stdout' | 'stderr') => void
 }
 
-function loadEnvironment(envFile: string | undefined, cwd: string): void {
+function loadEnvironment(envFile: string | undefined, cwd: string): string | undefined {
   const file = envFile
     ? resolve(cwd, envFile)
     : resolve(cwd, '.env')
   if (envFile || existsSync(file)) {
     loadEnvFile(file)
+    return file
   }
 }
 
@@ -95,7 +97,7 @@ function tunnelConfigFor(config: FlashNexusConfig, localUrl: string | undefined,
 
 export async function startFlashNexus(options: FlashNexusStartOptions = {}): Promise<PreviewSession> {
   const cwd = resolve(options.cwd ?? process.cwd())
-  loadEnvironment(options.envFile, cwd)
+  const envFile = loadEnvironment(options.envFile, cwd)
   const loaded = options.config
     ? { config: options.config }
     : await loadFlashNexusConfig({ cwd, envFile: options.envFile })
@@ -116,6 +118,9 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
   let hostname: string | undefined
   let zone: string | undefined
   let dnsManager: ReturnType<typeof createDnsManager<{ proxied?: boolean }>> | undefined
+  const cloudflareEnv = mode === 'named'
+    ? resolveCloudflareEnvironment(envFile)
+    : undefined
   if (mode === 'named') {
     const resolvedDns = resolveDnsConfig({
       cwd,
@@ -128,11 +133,12 @@ export async function startFlashNexus(options: FlashNexusStartOptions = {}): Pro
     })
     hostname = resolvedDns.hostname
     zone = resolvedDns.zone
-    const dnsAdapter = createCloudflareAdapter()
+    const dnsAdapter = createCloudflareAdapter({ env: cloudflareEnv })
     dnsManager = createDnsManager({ adapter: dnsAdapter })
   }
 
   const tunnel = createCloudflareTunnel({
+    env: cloudflareEnv,
     cloudflaredPath,
     originRequest: config.tunnel?.originRequest,
   })
